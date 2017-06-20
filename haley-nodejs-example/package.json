@@ -1,0 +1,22 @@
+{
+  "name": "haley-nodejs-example",
+  "version": "1.0.0",
+  "description": "haley-nodejs-example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "sockjs-client": "^1.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vital-ai/haley-examples"
+  },
+  "author": "“Marc <“marc@vital.ai”> (http://vital.ai)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vital-ai/haley-examples/issues"
+  },
+  "homepage": "https://github.com/vital-ai/haley-examples#readme"
+}
