@@ -259,16 +259,19 @@ function classification(text, closure) {
 	
 	var intentMessage = vitaljs.graphObject({type: 'http://vital.ai/ontology/vital-aimp#IntentMessage'});
 	intentMessage.URI = 'urn:' + new Date().getTime() + '_' + Math.round(Math.random() * 10000);
-	intentMessage.set('intent', 'classify');
-	intentMessage.set('propertyValue', text);
+	intentMessage.set('intent', 'classify-document');
 	intentMessage.set('channelURI', haley_channelURI);
-		
+	
+	var inputDocument = vitaljs.graphObject({type: 'http://vital.ai/ontology/vital-nlp#Document'});
+	inputDocument.URI = 'urn:temp-document-' + new Date().getTime() + '_' + Math.round(Math.random() * 10000);
+	inputDocument.set('body', text);
+
 	var timeout = setTimeout(function(){
 		closure('Classify request timed out (15,000ms)', null);
 		timeout = null;
 	}, 15000);
 	
-	haleyApi.sendMessageWithRequestCallback(haleySession, intentMessage, [], function(error){
+	haleyApi.sendMessageWithRequestCallback(haleySession, intentMessage, [inputDocument], function(error){
 	    
 	    if(error) {
 		console.error("Error when sending intent request message: ", error);
@@ -279,25 +282,31 @@ function classification(text, closure) {
 		
 	}, function(msgRL){
 		
-	    if(timeout != null) {
-		clearTimeout(timeout);
-		timeout = null;
-	    } else {
-		console.warn("Already timed out");
-		return false;
-	    }
-		
 	    //VirtualLoginResponseMessage 
 	    var res = msgRL.first();
+	    
+		//ignoring dialog begins and similar messages
+		if(res.type != 'http://vital.ai/ontology/vital-aimp#EntityMessage') {
+			//keep waiting
+			return true;
+		}
+		
+	    if(timeout != null) {
+			clearTimeout(timeout);
+			timeout = null;
+		    } else {
+			console.warn("Already timed out");
+			return false;
+	    }
 		
 	    var status = res.get('text');
 	    if(status == null) status = '';
 		
 	    if(status.toLowerCase() !== 'ok') {
-		var error = status ? status : '(unknown error)';
-		console.error(error);
-		closure(error, null);
-		return false; 
+	    	var error = status ? status : '(unknown error)';
+	    	console.error(error);
+	    	closure(error, null);
+	    	return false; 
 	    }
 
 		
