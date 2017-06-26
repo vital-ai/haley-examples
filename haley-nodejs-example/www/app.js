@@ -1,21 +1,25 @@
 
 $(function(){
 		
+	var classifyInputTitle = $('.classify-input-title');
     var classifyInput = $('.classify-input-text');
     var classifyButton = $('.classify-button');
 
     var classifyResults = $('#classify-results');
 	
     classifyButton.click(function(){
+    var t = $.trim(classifyInputTitle.val());
 	var v = $.trim(classifyInput.val());
 	if(v.length == 0) return;
 	
+	classifyInputTitle.attr('disabled', 'disabled');
 	classifyInput.attr('disabled', 'disabled');
 	classifyButton.attr('disabled', 'disabled');
 		
-	$.post('/classify', JSON.stringify({text: v}), function(data, textStatus, jqXHR){
+	$.post('/classify', JSON.stringify({title: t, text: v}), function(data, textStatus, jqXHR){
 	    console.log('classify response', data);
 			
+	    classifyInputTitle.removeAttr('disabled');
 	    classifyInput.removeAttr('disabled');
 	    classifyButton.removeAttr('disabled');
 			
@@ -55,6 +59,7 @@ $(function(){
 	}).fail(function(){
 	    classifyResults.empty().text('ERROR ' + arguments[2]);
 	    console.error("ERROR", arguments[2] );
+	    classifyInputTitle.removeAttr('disabled');
 	    classifyInput.removeAttr('disabled');
 	    classifyButton.removeAttr('disabled');
 	});

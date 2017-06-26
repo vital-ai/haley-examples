@@ -204,7 +204,7 @@ function onSessionAuthenticated() {
 	        	
 	        if(url == '/classify') {
 
-	            classification(requestObj.text, function(error, categories){
+	            classification(requestObj.title, requestObj.text, function(error, categories){
 	        			
 	        	var resp = {ok: error == null, results: []};
 	        			
@@ -254,7 +254,7 @@ function onSessionAuthenticated() {
     console.log("Server running at http://127.0.0.1:8002/");
 }
 
-function classification(text, closure) {
+function classification(title, text, closure) {
 	
 	
 	var intentMessage = vitaljs.graphObject({type: 'http://vital.ai/ontology/vital-aimp#IntentMessage'});
@@ -264,6 +264,7 @@ function classification(text, closure) {
 	
 	var inputDocument = vitaljs.graphObject({type: 'http://vital.ai/ontology/vital-nlp#Document'});
 	inputDocument.URI = 'urn:temp-document-' + new Date().getTime() + '_' + Math.round(Math.random() * 10000);
+	inputDocument.set('title', title);
 	inputDocument.set('body', text);
 
 	var timeout = setTimeout(function(){
